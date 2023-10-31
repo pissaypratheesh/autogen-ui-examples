@@ -1,11 +1,11 @@
 import logging
 from typing import Dict
 from ..datamodel import GenerateWebRequest
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 import os
 from fastapi.middleware.cors import CORSMiddleware
-import os
+import sys   
 
 from ..manager import Manager
 import traceback
@@ -39,20 +39,28 @@ api.mount("/files", StaticFiles(directory=files_static_root, html=True), name="f
 app.mount("/", StaticFiles(directory=static_folder_root, html=True), name="ui")
 
 
-manager = Manager()
-
 
 @api.post("/generate")
-async def generate(req: GenerateWebRequest) -> Dict:
+async def generate(req: Request) -> Dict:
     """Generate a response from the autogen flow"""
-    prompt = req.prompt
-    history = req.history or ""
+    req = await req.json()
+    prompt = req.get("prompt")
+    history = req.get("history", "")
 
-    prompt = f"{history}\n\n{prompt}"
+    prompt_with_history = f"{history}\n\n{prompt}"
     print("******history******", history)
 
     try:
-        agent_response = manager.run_flow(prompt=prompt)
+
+        manager = Manager()
+
+        if prompt.startswith("/system_design"):
+            print("in run_system_design_flow")
+            agent_response = manager.run_system_design_flow(prompt=prompt)
+        else:
+            agent_response = manager.run_flow(prompt=prompt_with_history)
+        
+
         response = {
             "data": agent_response,
             "status": True
