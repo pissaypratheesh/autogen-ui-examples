@@ -15,6 +15,7 @@ Also See this article for how Autogen supports multiple [llm providers](https://
 
 ```bash
 export OPENAI_API_KEY=<your key>
+export SERPAPI_API_KEY=<your serper api key>
 ```
 
 ## Getting Started
