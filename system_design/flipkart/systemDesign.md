@@ -1,12 +1,68 @@
 user_proxy (to teachableagent):
 
-Remember this: Flipkart is an Indian e-commerce company that offers a wide range of products and services. Some of its features and services include:
-- Online shopping for various categories such as electronics, fashion, home appliances, and more.
-- Mobile app for easy access and shopping on-the-go.
-- Ping feature in the mobile app, which allows users to stay connected and share selected products and pages with friends and family.
-- Competes primarily with Amazon India and Snapdeal, holding a significant market share in the Indian e-commerce industry.
+Remember this: - App only discounts
+- Shop where you are
+- Be in the know
+- Shop smarter
+- Take advice and be inspired
+- Make your Wishlist
+- Save
 
 --------------------------------------------------------------------------------
+teachableagent (to user_proxy):
+
+I have noted down the following teachings from you:
+
+1. App only discounts
+2. Shop where you are
+3. Be in the know
+4. Shop smarter
+5. Take advice and be inspired
+6. Make your Wishlist
+7. Save
+
+I will keep these in mind for future reference. Is there anything else you would like me to remember?
+
+--------------------------------------------------------------------------------
+user_proxy (to teachableagent):
+
+No, that's all for now. Remember to apply these teachings to your shopping habits and make the most out of your shopping experiences.
+
+--------------------------------------------------------------------------------
+🚀 ~ file: manager.py:269 ~ mem_query: Tell me about:  flipkart
+user_proxy (to teachableagent):
+
+Tell me about:  flipkart
+
+--------------------------------------------------------------------------------
+teachableagent (to user_proxy):
+
+Flipkart is an Indian e-commerce company founded in 2007 by Sachin Bansal and Binny Bansal. It started as an online bookstore but quickly expanded to sell a wide range of products, including electronics, fashion, home appliances, and more. Flipkart is known for its user-friendly interface, competitive pricing, and a vast selection of products.
+
+In 2018, Flipkart was acquired by Walmart, making it one of the largest acquisitions in the Indian e-commerce industry. This acquisition helped Flipkart further strengthen its position in the market and expand its reach.
+
+Flipkart operates through its website and mobile app, providing customers with a convenient shopping experience. It offers various payment options, including cash on delivery, credit/debit cards, and digital wallets. Flipkart also provides reliable delivery services, often offering fast and efficient shipping.
+
+Additionally, Flipkart has introduced several initiatives to cater to the needs of Indian customers, such as Flipkart Plus, a loyalty program that offers benefits like free and faster delivery, early access to sales, and more.
+
+Overall, Flipkart has played a significant role in revolutionizing the e-commerce industry in India and has become one of the leading online marketplaces in the country.
+
+--------------------------------------------------------------------------------
+user_proxy (to teachableagent):
+
+Flipkart has also ventured into various other sectors, such as digital payments with PhonePe, a mobile payments app. PhonePe allows users to make payments, transfer money, and recharge mobile phones, among other services.
+
+Flipkart has also launched its own private label brands, offering a range of products across categories like fashion, electronics, home decor, and more. These private label brands provide customers with affordable and quality products.
+
+In recent years, Flipkart has been focusing on expanding its reach in smaller towns and rural areas of India. It has introduced initiatives like Flipkart Samarth, which supports artisans, weavers, and small businesses by providing them with access to Flipkart's platform and resources.
+
+Flipkart has faced competition from other e-commerce giants like Amazon in the Indian market. To stay ahead, it has been investing in technology, logistics, and customer service to enhance the overall shopping experience.
+
+Overall, Flipkart has had a significant impact on the Indian e-commerce industry, providing customers with a wide range of products, competitive pricing, and convenient shopping options. With its continued growth and expansion, Flipkart is expected to remain a dominant player in the Indian e-commerce market.
+
+--------------------------------------------------------------------------------
+Teachable agent msgs
+[{'content': 'Tell me about:  flipkart', 'role': 'assistant'}, {'content': 'Flipkart is an Indian e-commerce company founded in 2007 by Sachin Bansal and Binny Bansal. It started as an online bookstore but quickly expanded to sell a wide range of products, including electronics, fashion, home appliances, and more. Flipkart is known for its user-friendly interface, competitive pricing, and a vast selection of products.\n\nIn 2018, Flipkart was acquired by Walmart, making it one of the largest acquisitions in the Indian e-commerce industry. This acquisition helped Flipkart further strengthen its position in the market and expand its reach.\n\nFlipkart operates through its website and mobile app, providing customers with a convenient shopping experience. It offers various payment options, including cash on delivery, credit/debit cards, and digital wallets. Flipkart also provides reliable delivery services, often offering fast and efficient shipping.\n\nAdditionally, Flipkart has introduced several initiatives to cater to the needs of Indian customers, such as Flipkart Plus, a loyalty program that offers benefits like free and faster delivery, early access to sales, and more.\n\nOverall, Flipkart has played a significant role in revolutionizing the e-commerce industry in India and has become one of the leading online marketplaces in the country.', 'role': 'user'}, {'content': "Flipkart has also ventured into various other sectors, such as digital payments with PhonePe, a mobile payments app. PhonePe allows users to make payments, transfer money, and recharge mobile phones, among other services.\n\nFlipkart has also launched its own private label brands, offering a range of products across categories like fashion, electronics, home decor, and more. These private label brands provide customers with affordable and quality products.\n\nIn recent years, Flipkart has been focusing on expanding its reach in smaller towns and rural areas of India. It has introduced initiatives like Flipkart Samarth, which supports artisans, weavers, and small businesses by providing them with access to Flipkart's platform and resources.\n\nFlipkart has faced competition from other e-commerce giants like Amazon in the Indian market. To stay ahead, it has been investing in technology, logistics, and customer service to enhance the overall shopping experience.\n\nOverall, Flipkart has had a significant impact on the Indian e-commerce industry, providing customers with a wide range of products, competitive pricing, and convenient shopping options. With its continued growth and expansion, Flipkart is expected to remain a dominant player in the Indian e-commerce market.", 'role': 'assistant'}]
 user_proxy (to assistant):
 
 

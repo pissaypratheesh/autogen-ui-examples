@@ -54,12 +54,24 @@ async def generate(req: Request) -> Dict:
 
         manager = Manager()
 
-        if prompt.startswith("/system_design"):
-            print("in run_system_design_flow")
-            agent_response = manager.run_system_design_flow(prompt=prompt)
-        else:
-            agent_response = manager.run_flow(prompt=prompt_with_history)
-        
+        # if prompt.startswith("/system_design"):
+        #     print("in run_system_design_flow")
+        #     agent_response = manager.run_system_design_flow(prompt=prompt)
+        # else:
+        #     agent_response = manager.run_flow(prompt=prompt_with_history)
+        cases = {
+            "/system_design": lambda: manager.run_system_design_flow(prompt=prompt),
+            "/teachable": lambda: manager.run_teachable_agent_flow(prompt=prompt),
+            # Add more cases here
+        }
+
+        for case, action in cases.items():
+            if prompt.startswith(case):
+                agent_response = action()
+                return { "data" : agent_response, "status": True }
+
+        # If no case matches, perform a default action
+        agent_response = manager.run_flow(prompt=prompt_with_history)
 
         response = {
             "data": agent_response,

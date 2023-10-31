@@ -73,19 +73,70 @@ class Manager(object):
         return response
     
     def run_teachable_agent_flow(self, prompt: str, flow: str = "default") -> None:
+        refined = "teachable/"
+        create_directory(f"{refined}")
         autogen.ChatCompletion.start_logging(compact=False)
-
+        start_time = time.time()
+        
+        numeric_hash = create_numeric_hash(prompt)
         config_list = autogen.config_list_from_json(
             env_or_file="OAI_CONFIG_LIST",
             file_location=".",
         )
         llm_config = {
-            "seed": 42,  # seed for caching and reproducibility
+            "seed": numeric_hash,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
             
             "temperature": 0,  # temperature for sampling
             "use_cache": True,  # whether to use cache
         }
+        #Create a teachable agent config
+        teach_config={
+            "verbosity": 0,  # 0 for basic info, 1 to add memory operations, 2 for analyzer messages, 3 for memo lists.
+            "reset_db": False,  # Set to True to start over with an empty database.
+            "path_to_db_dir": "./tmp/notebook/teachable_agent_db",  # Path to the directory where the database will be stored.
+            "recall_threshold": 1.5,  # Higher numbers allow more (but less relevant) memos to be recalled.
+        }
+        user = UserProxyAgent(
+            name="user",
+            human_input_mode="NEVER",
+            is_termination_msg=lambda x: True if "TERMINATE" in x.get("content") else False,
+            max_consecutive_auto_reply=1,
+        )
+
+        # user_proxy = autogen.UserProxyAgent(
+        #     name="user_proxy",
+        #     human_input_mode="NEVER",
+        #     llm_config=llm_config,
+        #     max_consecutive_auto_reply=3,
+        #     is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
+        #     code_execution_config={
+        #         "work_dir": f"{refined}",
+        #         "use_docker": False
+        #     },
+        # )
+
+        teachable_agent = TeachableAgent(
+            name="teachableagent",
+            llm_config=llm_config,
+            max_consecutive_auto_reply=1,
+            teach_config=teach_config)
+        
+        #Train the teachable agent by user feedbacks
+        teachable_agent.learn_from_user_feedback()
+
+        #initiate
+        user.initiate_chat(teachable_agent, message=f"{prompt.replace('/teachable', '')}", clear_history=False)
+        logged_history = autogen.ChatCompletion.logged_history
+        autogen.ChatCompletion.stop_logging()
+        response = {
+            "messages": user.chat_messages[teachable_agent][1:],
+            "usage": parse_token_usage(logged_history),
+            "duration": time.time() - start_time,
+        }
+        return response
+
+
     
     def run_system_design_flow(self, prompt: str, flow: str = "default") -> None:
         company = prompt.replace("/system_design", '')
@@ -135,7 +186,7 @@ class Manager(object):
         teachable_agent = TeachableAgent(
             name="teachableagent",
             llm_config=llm_config,
-            max_consecutive_auto_reply=0,
+            max_consecutive_auto_reply=1,
             teach_config=teach_config)
         
         #Train the teachable agent by user feedbacks
@@ -154,6 +205,12 @@ class Manager(object):
             # Redirect stdout to the file
             sys.stdout = file
             user_proxy.initiate_chat(teachable_agent, message=f"Remember this: {search_res}", clear_history=True)
+
+            #Fetch from memory and store in systemDesign array
+            mem_query = f"Tell me about: {company}"
+            user_proxy.initiate_chat(teachable_agent, message=f'{mem_query}', clear_history=True)
+            systemDesign.append(get_first_user_content(user_proxy.chat_messages[teachable_agent][1:]))
+
 
             start_time = time.time()
             user_proxy.initiate_chat(
@@ -215,11 +272,10 @@ class Manager(object):
             systemDesign.append(get_first_user_content(user_proxy.chat_messages[assistant][1:]))
             
 
-
         # Reset stdout to its original value
         sys.stdout = original_stdout
         systemDesign.append({
-                "content":search_res,
+                "content": f"Brief from search result: {search_res}",
                 "role": "user"
         })
         logged_history = autogen.ChatCompletion.logged_history

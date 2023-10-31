@@ -8,6 +8,8 @@ openai_api_key = os.environ.get("OPENAI_API_KEY")
 serpapi_api_key = os.environ.get("SERPAPI_API_KEY")
 
 def get_search_result(search_term):
+    if not serpapi_api_key:
+        return ""
     if openai_api_type == "azure":
         llm = AzureChatOpenAI(
                 openai_api_type="azure",
