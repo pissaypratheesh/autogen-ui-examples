@@ -29,8 +29,10 @@ class Manager(object):
 
     def run_flow(self, prompt: str, flow: str = "default") -> None:
         autogen.ChatCompletion.start_logging(compact=False)
-        config_list = autogen.config_list_openai_aoai()
-
+        config_list = autogen.config_list_from_json(
+            env_or_file="OAI_CONFIG_LIST",
+            file_location=".",
+        )
         llm_config = {
             "seed": 42,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
@@ -72,10 +74,15 @@ class Manager(object):
     
     def run_teachable_agent_flow(self, prompt: str, flow: str = "default") -> None:
         autogen.ChatCompletion.start_logging(compact=False)
-        config_list = a_config_list#autogen.config_list_openai_aoai()
+
+        config_list = autogen.config_list_from_json(
+            env_or_file="OAI_CONFIG_LIST",
+            file_location=".",
+        )
         llm_config = {
             "seed": 42,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
+            
             "temperature": 0,  # temperature for sampling
             "use_cache": True,  # whether to use cache
         }
@@ -87,7 +94,11 @@ class Manager(object):
         create_directory(f"{refined}")
 
         autogen.ChatCompletion.start_logging(compact=False)
-        config_list = a_config_list#autogen.config_list_openai_aoai()
+
+        config_list = autogen.config_list_from_json(
+            env_or_file="OAI_CONFIG_LIST",
+            file_location=".",
+        )
         numeric_hash = create_numeric_hash(prompt)
         llm_config = {
             "seed": numeric_hash,  # seed for caching and reproducibility

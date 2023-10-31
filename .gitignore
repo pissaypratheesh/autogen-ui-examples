@@ -10,7 +10,7 @@ testapp/*
 tmp/
 # C extensions
 *.so 
-
+OAI_CONFIG_LIST
 scratch
 coding
 
