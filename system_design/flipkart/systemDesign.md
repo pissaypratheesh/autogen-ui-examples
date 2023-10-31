@@ -1,32 +1,26 @@
 user_proxy (to teachableagent):
 
-Remember this: - App only discounts
-- Shop where you are
-- Be in the know
-- Shop smarter
-- Take advice and be inspired
-- Make your Wishlist
-- Save
+Remember this: Flipkart is an Indian e-commerce company that offers various features and services, including:
+
+1. Online shopping platform: Flipkart allows users to browse and purchase a wide range of products, such as electronics, fashion, home appliances, books, and more.
+2. Mobile app: The Flipkart mobile app provides a convenient shopping experience for users on the go.
+3. Ping feature: This feature allows users to stay connected with friends and family while shopping, enabling them to share product selections and pages with others.
+4. Competitive pricing: Flipkart offers competitive prices on products, often with discounts and deals.
+5. Flexible payment options: Users can choose from multiple payment options, including cash on delivery, credit/debit cards, and digital wallets.
+6. Return policy: Flipkart has an easy return policy, allowing customers to return products if they are not satisfied with their purchase.
+7. Customer support: The company provides customer support through various channels, such as phone, email, and social media.
+
+Flipkart competes primarily with Amazon India and domestic rival Snapdeal and held a 39.5% market share in the Indian e-commerce industry as of March 2017.
 
 --------------------------------------------------------------------------------
 teachableagent (to user_proxy):
 
-I have noted down the following teachings from you:
-
-1. App only discounts
-2. Shop where you are
-3. Be in the know
-4. Shop smarter
-5. Take advice and be inspired
-6. Make your Wishlist
-7. Save
-
-I will keep these in mind for future reference. Is there anything else you would like me to remember?
+Got it! I have saved the information about Flipkart in my memory. If you have any more questions or need assistance in the future, feel free to ask!
 
 --------------------------------------------------------------------------------
 user_proxy (to teachableagent):
 
-No, that's all for now. Remember to apply these teachings to your shopping habits and make the most out of your shopping experiences.
+Thank you! I will keep that in mind. If I have any more questions or need assistance, I will definitely reach out to you.
 
 --------------------------------------------------------------------------------
 🚀 ~ file: manager.py:269 ~ mem_query: Tell me about:  flipkart

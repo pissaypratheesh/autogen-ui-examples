@@ -1,6 +1,6 @@
 # AutoGen UI
 
-![AutoGen UI Screenshot](docs/images/autogenuiscreen.png)
+![AutoGen UI Screenshot](docs/images/system_design_1.jpg)
 
 Experimental UI for working with [AutoGen](https://github.com/microsoft/autogen) agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
 
@@ -28,7 +28,7 @@ pip install autogenui .
 or to install from source
 
 ```bash
-git clone git@github.com:victordibia/autogen-ui.git
+git clone git@github.com:pissaypratheesh/autogen-ui-examples.git
 cd autogenui
 pip install -e .
 ```
@@ -62,6 +62,9 @@ To modify the source files, make changes in the frontend source files and run `n
   - [ ] Compose agent nodes into flows
   - [ ] Run agent flows
 - [ ] Explore external integrations e.g. with [Flowise](https://github.com/FlowiseAI/Flowise)
+
+## Credits
+This project is a fork of [Autogen-ui](https://github.com/victordibia/autogen-ui)
 
 ## References
 
