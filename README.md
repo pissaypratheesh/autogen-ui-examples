@@ -32,6 +32,8 @@ or to install from source
 git clone git@github.com:pissaypratheesh/autogen-ui-examples.git
 cd autogenui
 pip install -e .
+pip install "pyautogen[teachable]"
+copy OAI_CONFIG_LIST_copy file to OAI_CONFIG_LIST and add relevant keys
 ```
 
 Run ui server.

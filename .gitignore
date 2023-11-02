@@ -13,6 +13,7 @@ tmp/
 OAI_CONFIG_LIST
 scratch
 coding
+ytvideo
 
 # Distribution / packaging
 .Python
