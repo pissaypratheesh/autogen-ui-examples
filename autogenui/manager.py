@@ -8,6 +8,7 @@ from .utils import parse_token_usage
 import time
 from autogen.agentchat.contrib.teachable_agent import TeachableAgent
 from autogen import UserProxyAgent
+from .lm_agent import LMStudioAgent
 from .search.search_query import get_search_result
 from .tasks.system_design import extract_tasks
 from .tasks.numeric_hash import create_numeric_hash
@@ -70,8 +71,61 @@ class Manager(object):
             "usage": parse_token_usage(logged_history),
             "duration": time.time() - start_time,
         }
+        return response    
+    
+    def run_local_llm_flow(self, prompt: str, flow: str = "default") -> None:
+        autogen.ChatCompletion.start_logging(compact=False)
+        promptStr = prompt.replace("/local_llm ", '')
+        refined = promptStr
+        seed = create_numeric_hash(refined)
+        print(f"seed: {seed}")
+        llm_config = {
+            "seed": seed,  # seed for caching and reproducibility
+            "config_list": mistralAssistant,  # a list of OpenAI API configurations
+            "temperature": 0,  # temperature for sampling
+            "use_cache": True,  # whether to use cache
+        }
+
+        assistant = LMStudioAgent(
+            name="Principal Software Engineer",
+            system_message="""You are a Principal Software Engineer.
+                              You are designing the complete architecture for a given system.""",
+            default_auto_reply="default_auto_reply",
+            llm_config=llm_config)
+        
+
+        # create a UserProxyAgent instance named "user_proxy"
+        user_proxy = autogen.UserProxyAgent(
+            name="user_proxy",
+            human_input_mode="NEVER",
+            llm_config=llm_config,
+            max_consecutive_auto_reply=3,
+            default_auto_reply="default_auto_reply",
+            system_message="""Reply TERMINATE if the task has been solved at full satisfaction.
+                             Otherwise, reply CONTINUE, or the reason why the task is not solved yet.""",
+            is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
+            code_execution_config={
+                "last_n_messages": 10,
+                "work_dir": "local_llm",
+                "use_docker": False
+            },
+        )
+        start_time = time.time()
+        user_proxy.initiate_chat(
+            assistant,
+            message=refined, 
+            clear_history=True
+        )
+        logged_history = autogen.ChatCompletion.logged_history
+        autogen.ChatCompletion.stop_logging()
+        response = {
+            "messages": user_proxy.chat_messages[assistant],
+            "usage": parse_token_usage(logged_history),
+            "duration": time.time() - start_time,
+        }
         return response
     
+
     def run_teachable_agent_flow(self, prompt: str, flow: str = "default") -> None:
         refined = "teachable/"
         create_directory(f"{refined}")

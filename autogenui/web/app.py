@@ -56,6 +56,7 @@ async def generate(req: Request) -> Dict:
         cases = {
             "/system_design": lambda: manager.run_system_design_flow(prompt=prompt),
             "/teachable": lambda: manager.run_teachable_agent_flow(prompt=prompt),
+            "/local_llm": lambda: manager.run_local_llm_flow(prompt=prompt),
             # Add more cases here
         }
 
