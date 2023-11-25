@@ -21,6 +21,7 @@ from termcolor import colored
 import random
 from openai import OpenAI
 import os
+import os
 import PIL
 from PIL import Image
 import matplotlib.pyplot as plt
