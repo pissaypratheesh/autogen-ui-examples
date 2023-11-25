@@ -1,6 +1,7 @@
 # a manager class that can
 # load an autogen flow run an autogen flow and return the response to the client
 import sys
+import logging
 
 from typing import Dict
 import autogen
@@ -26,7 +27,7 @@ mistralAssistant = [{
 
 class Manager(object):
     def __init__(self) -> None:
-
+        logging.basicConfig(filename='autogen.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         pass
 
     def run_flow(self, prompt: str, flow: str = "default") -> None:
@@ -66,7 +67,7 @@ class Manager(object):
 
         messages = user_proxy.chat_messages[assistant]
         logged_history = autogen.ChatCompletion.logged_history
-        autogen.ChatCompletion.stop_logging()
+        logging.info('Stopping logging for run_flow method')
         response = {
             "messages": messages[1:],
             "usage": parse_token_usage(logged_history),
@@ -74,7 +75,7 @@ class Manager(object):
         }
         return response    
     def run_summarization_flow(self, prompt: str, id: str = None) -> None:
-        autogen.ChatCompletion.start_logging(compact=False)
+        logging.info('Starting logging for run_flow method')
         config_list = autogen.config_list_from_json(
             env_or_file="OAI_CONFIG_LIST_AZURE",
             file_location=".",
