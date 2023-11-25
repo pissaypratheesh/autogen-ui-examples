@@ -263,7 +263,7 @@ class DalleCreator(AssistantAgent):
 
         # Data flow begins
         self.send(message=img_prompt, recipient=self.dalle, request_reply=True)
-        folder_name = "generated_images"
+        folder_name = str(numeric_hash)
         os.makedirs(folder_name, exist_ok=True)
         img = extract_img(self.dalle)
         img.save(f"{folder_name}/image.png")
