@@ -151,8 +151,13 @@ async def create_img(request: Request):
         return {"error": "Missing prompt parameter"}
 
 @api.get("/get_image")
+from ..tasks.numeric_hash import create_numeric_hash
+
 async def get_image(request: Request):
     hash_value = request.query_params.get("hash")
+    prompt = request.query_params.get("prompt")
+    if not hash_value and prompt:
+        hash_value = create_numeric_hash(prompt)
     if hash_value:
         folder_path = f"./dalle_images/{hash_value}"
         if os.path.exists(folder_path):
