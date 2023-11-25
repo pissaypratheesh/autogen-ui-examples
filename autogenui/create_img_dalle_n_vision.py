@@ -115,19 +115,22 @@ def dalle_call(client: OpenAI, model: str, prompt: str, size: str, quality: str,
         return cache[key]
 
     # If not in cache, compute and store the result
-    response = client.images.generate(
-          model=model,
-          prompt=prompt,
-          size=size,
-          quality=quality,
-          n=n,
-        )
-    image_url = response.data[0].url
-    img_data = get_image_data(image_url)
-    cache[key] = img_data
+    try:
+        response = client.images.generate(
+            model=model,
+            prompt=prompt,
+            size=size,
+            quality=quality,
+            n=n,
+            )
+        image_url = response.data[0].url
+        img_data = get_image_data(image_url)
+        cache[key] = img_data
 
-    return img_data
-
+        return img_data
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return f"An error occurred: {str(e)}"
 
 
 # Here is a helper function to extract image from a DALLE agent. We will show the DALLE agent later.
@@ -264,12 +267,9 @@ class DalleCreator(AssistantAgent):
 
         # Data flow begins
         self.send(message=img_prompt, recipient=self.dalle, request_reply=True)
-        folder_name = str(self.llm_config["cache_seed"])
+        folder_name =  "dalle_images/" + str(self.llm_config["cache_seed"])
+        os.makedirs(folder_name, exist_ok=True)
         print("folder_name or self", self.llm_config, folder_name)
-        if os.path.exists(folder_name):
-            return {"created_image": str(numeric_hash)}
-        else:
-            os.makedirs(folder_name, exist_ok=True)
         img = extract_img(self.dalle)
         img.save(f"{folder_name}/image.png")
         plt.imshow(img)
@@ -294,13 +294,22 @@ class DalleCreator(AssistantAgent):
                            recipient=self.critics,
                            request_reply=True)
             feedback = self._oai_messages[self.critics][-1]["content"]
-            img_prompt = re.findall("PROMPT: (.*)", feedback)[0]
+            matches = re.findall("PROMPT: (.*)", feedback)
+            if matches:
+                img_prompt = matches[0]
+            else:
+                # Handle the case where no match is found
+                img_prompt = ""
+                # Or raise an exception
+                raise ValueError("No match found for PROMPT in feedback")
             
             self.send(
                 message=img_prompt,
                 recipient=self.dalle,
                 request_reply=True)
             img = extract_img(self.dalle)
+            os.makedirs(folder_name, exist_ok=True)
+            img.save(f"{folder_name}/image_{i}.png")
             plt.imshow(img)
             plt.axis('off')  # Turn off axis numbers
             plt.show()
@@ -312,6 +321,11 @@ class DalleCreator(AssistantAgent):
 def create_image_by_agents(prompt: str) -> PIL.Image:
     numeric_hash = create_numeric_hash(prompt)
     gpt4_llm_config["cache_seed"] = numeric_hash
+    str_numeric_hash = "dalle_images/" + str(numeric_hash)
+    if os.path.exists(str_numeric_hash):
+        return {"created_image": numeric_hash}
+    else:
+        os.makedirs(str_numeric_hash, exist_ok=True)
     creator = DalleCreator(
         name="DALLE Creator!",
         max_consecutive_auto_reply=0,
@@ -331,7 +345,7 @@ def create_image_by_agents(prompt: str) -> PIL.Image:
     #print("\n\n\nimg-->",img)
     print("\n\n\noutput-->",output)
     return {
-        "created_image": str(numeric_hash)
+        "created_image": numeric_hash
     }
 
 

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .release.sh
 settings.json
+autogenui/dalle_images
 notebooks/*
 .env.*
 testapp/*
@@ -11,6 +12,7 @@ tmp/
 # C extensions
 *.so 
 OAI_CONFIG_LIST
+OAI_CONFIG_LIST_AZURE
 scratch
 coding
 ytvideo

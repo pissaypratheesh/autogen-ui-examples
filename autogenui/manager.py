@@ -10,6 +10,7 @@ from autogen.agentchat.contrib.teachable_agent import TeachableAgent
 from autogen import UserProxyAgent
 from .lm_agent import LMStudioAgent
 from .search.search_query import get_search_result
+from .search.image_api import getBingImages
 from .tasks.system_design import extract_tasks
 from .tasks.numeric_hash import create_numeric_hash
 from .tasks.refine_str import remove_whitespace_and_special_chars
@@ -78,7 +79,6 @@ class Manager(object):
         promptStr = prompt.replace("/local_llm ", '')
         refined = promptStr
         seed = create_numeric_hash(refined)
-        print(f"seed: {seed}")
         llm_config = {
             "seed": seed,  # seed for caching and reproducibility
             "config_list": mistralAssistant,  # a list of OpenAI API configurations

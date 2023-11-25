@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from youtubesearchpython import VideosSearch
 from pytube import YouTube
 from ..create_img_dalle_n_vision import create_image_by_agents
+from ..tasks.numeric_hash import create_numeric_hash
 
 import sys   
 
@@ -142,6 +143,7 @@ async def test(request: Request):
     res = filter_sentences("Modi in Dubai",array,'title')
     return {"result": res}
 
+#http://localhost:8081/api/create_img?prompt=elephant%20and%20rabbit%20having%20running%20race%20together%20in%20same%20direction
 @api.get("/create_img")
 async def create_img(request: Request):
     prompt = request.query_params.get("prompt")
@@ -150,9 +152,9 @@ async def create_img(request: Request):
     else:
         return {"error": "Missing prompt parameter"}
 
+#http://localhost:8081/api/get_image?hash=43989934125119128162879437038109310099668647771280565966691187460338044253308
+#http://localhost:8081/api/create_img?prompt=elephant%20and%20rabbit%20having%20running%20race%20together%20in%20same%20direction
 @api.get("/get_image")
-from ..tasks.numeric_hash import create_numeric_hash
-
 async def get_image(request: Request):
     hash_value = request.query_params.get("hash")
     prompt = request.query_params.get("prompt")
