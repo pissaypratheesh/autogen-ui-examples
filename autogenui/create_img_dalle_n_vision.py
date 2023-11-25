@@ -266,7 +266,10 @@ class DalleCreator(AssistantAgent):
         self.send(message=img_prompt, recipient=self.dalle, request_reply=True)
         folder_name = str(self.llm_config["cache_seed"])
         print("folder_name or self", self.llm_config, folder_name)
-        os.makedirs(folder_name, exist_ok=True)
+        if os.path.exists(folder_name):
+            return {"created_image": str(numeric_hash)}
+        else:
+            os.makedirs(folder_name, exist_ok=True)
         img = extract_img(self.dalle)
         img.save(f"{folder_name}/image.png")
         plt.imshow(img)
