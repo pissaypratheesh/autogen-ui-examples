@@ -328,7 +328,7 @@ def create_image_by_agents(prompt: str) -> PIL.Image:
                          message=prompt)
     #img = extract_img(creator)
     #print("\n\n\nimg-->",img)
-    #print("\n\n\noutput-->",output)
-    return output
+    print("\n\n\noutput-->",output)
+    return "output"
 
 
