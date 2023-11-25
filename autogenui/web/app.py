@@ -147,3 +147,20 @@ async def create_img(request: Request):
         return create_image_by_agents(prompt)
     else:
         return {"error": "Missing prompt parameter"}
+
+        @api.get("/get_image")
+        async def get_image(request: Request):
+            hash_value = request.query_params.get("hash")
+            if hash_value:
+                folder_path = f"./dalle_images/{hash_value}"
+                if os.path.exists(folder_path):
+                    image_files = [f for f in os.listdir(folder_path) if f.endswith(".png") or f.endswith(".jpg")]
+                    if image_files:
+                        image_path = os.path.join(folder_path, random.choice(image_files))
+                        return FileResponse(image_path, media_type="image/png")
+                    else:
+                        return {"error": "No images found in the folder"}
+                else:
+                    return {"error": "Folder does not exist"}
+            else:
+                return {"error": "Missing hash parameter"}
