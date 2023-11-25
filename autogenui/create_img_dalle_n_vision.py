@@ -22,6 +22,7 @@ import random
 from openai import OpenAI
 import os
 import os
+import os
 import PIL
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -262,7 +263,10 @@ class DalleCreator(AssistantAgent):
 
         # Data flow begins
         self.send(message=img_prompt, recipient=self.dalle, request_reply=True)
+        folder_name = "generated_images"
+        os.makedirs(folder_name, exist_ok=True)
         img = extract_img(self.dalle)
+        img.save(f"{folder_name}/image.png")
         plt.imshow(img)
         plt.axis('off')  # Turn off axis numbers
         plt.show()
