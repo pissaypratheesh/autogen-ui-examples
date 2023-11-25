@@ -5,6 +5,7 @@ __pycache__/
 .release.sh
 settings.json
 autogenui/dalle_images
+autogenui/OAI_CONFIG_LIST
 notebooks/*
 .env.*
 testapp/*
