@@ -212,9 +212,8 @@ class DALLEAgent(ConversableAgent):
 #  This agent facilitates the creation of visualizations through a collaborative effort among its child agents (DALLE and Critics).
 #  It iteratively improves the image by sending the prompt to DALLE and receiving feedback from Critics.
 class DalleCreator(AssistantAgent):
-    def __init__(self, n_iters=2, numeric_hash=None, **kwargs):
+    def __init__(self, n_iters=2, **kwargs):
         super().__init__(**kwargs)
-        self.numeric_hash = numeric_hash
 
     def __init__(self, n_iters=2, **kwargs):
         """
@@ -307,11 +306,9 @@ class DalleCreator(AssistantAgent):
         return True, "result.jpg"
 
 
-def create_image_by_agents(prompt: str) -> PIL.Image:
-    numeric_hash = create_numeric_hash(prompt)
+def create_image_by_agents(prompt: str, numeric_hash: str) -> PIL.Image:
     gpt4_llm_config["cache_seed"] = numeric_hash
     creator = DalleCreator(
-        numeric_hash=numeric_hash,
         name="DALLE Creator!",
         max_consecutive_auto_reply=0,
         system_message="Help me coordinate generating image",
