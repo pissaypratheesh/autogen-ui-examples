@@ -30,9 +30,53 @@ class Manager(object):
         pass
 
     def run_flow(self, prompt: str, flow: str = "default") -> None:
+        #autogen.ChatCompletion.start_logging(compact=False)
+        config_list = autogen.config_list_from_json(
+            env_or_file="OAI_CONFIG_LIST_AZURE",
+            file_location=".",
+        )
+        llm_config = {
+            "seed": 42,  # seed for caching and reproducibility
+            "config_list": config_list,  # a list of OpenAI API configurations
+            "temperature": 0,  # temperature for sampling
+            "use_cache": True,  # whether to use cache
+        }
+
+        assistant = autogen.AssistantAgent(
+            name="assistant",
+            max_consecutive_auto_reply=3, llm_config=llm_config,)
+
+        # create a UserProxyAgent instance named "user_proxy"
+        user_proxy = autogen.UserProxyAgent(
+            name="user_proxy",
+            human_input_mode="NEVER",
+            llm_config=llm_config,
+            max_consecutive_auto_reply=3,
+            is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
+            code_execution_config={
+                "work_dir": "scratch/coding",
+                "use_docker": False
+            },
+        )
+        start_time = time.time()
+        user_proxy.initiate_chat(
+            assistant,
+            message=prompt,
+        )
+
+        messages = user_proxy.chat_messages[assistant]
+        logged_history = autogen.ChatCompletion.logged_history
+        autogen.ChatCompletion.stop_logging()
+        response = {
+            "messages": messages[1:],
+            "usage": parse_token_usage(logged_history),
+            "duration": time.time() - start_time,
+        }
+        return response    
+    def run_summarization_flow(self, prompt: str, id: str = None) -> None:
         autogen.ChatCompletion.start_logging(compact=False)
         config_list = autogen.config_list_from_json(
-            env_or_file="OAI_CONFIG_LIST",
+            env_or_file="OAI_CONFIG_LIST_AZURE",
             file_location=".",
         )
         llm_config = {
@@ -189,8 +233,6 @@ class Manager(object):
             "duration": time.time() - start_time,
         }
         return response
-
-
     
     def run_system_design_flow(self, prompt: str, flow: str = "default") -> None:
         company = prompt.replace("/system_design", '')
