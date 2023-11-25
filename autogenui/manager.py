@@ -111,7 +111,7 @@ class Manager(object):
 
         messages = user_proxy.chat_messages[assistant]
         logged_history = autogen.ChatCompletion.logged_history
-        autogen.ChatCompletion.stop_logging()
+        logging.info('Stopping logging for run_system_design_flow method')
         response = {
             "messages": messages[1:],
             "usage": parse_token_usage(logged_history),
@@ -120,7 +120,7 @@ class Manager(object):
         return response    
     
     def run_local_llm_flow(self, prompt: str, flow: str = "default") -> None:
-        autogen.ChatCompletion.start_logging(compact=False)
+        logging.info('Starting logging for run_system_design_flow method')
         promptStr = prompt.replace("/local_llm ", '')
         refined = promptStr
         seed = create_numeric_hash(refined)
