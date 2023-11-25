@@ -2,6 +2,7 @@ import logging
 from typing import Dict
 from ..datamodel import GenerateWebRequest
 from fastapi import FastAPI, Request
+import re
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
