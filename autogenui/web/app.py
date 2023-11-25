@@ -2,6 +2,7 @@ import logging
 from typing import Dict
 from ..datamodel import GenerateWebRequest
 from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 from ..search.image_api import getBingImages, extract_video_data
