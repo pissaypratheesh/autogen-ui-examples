@@ -7,14 +7,17 @@ from pytube import exceptions
 from youtube_transcript_api import YouTubeTranscriptApi
 
 def _extractYouTubeShorts(html):
-    pattern = r'href="(/shorts/[^"]*)"'
-    matches = re.findall(pattern, html)
-    print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:12 ~ matches:", matches)
+    pattern = r'<script[^>]*>(.*?)</script>'
+    script_content = re.findall(pattern, html, re.DOTALL)
+    print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:12 ~ script_content:", script_content)
     result = []
 
-    for match in matches:
-        url = f"https://www.youtube.com{match.replace('&amp;', '&')}"
-        result.append(url)
+    for content in script_content:
+        shorts_pattern = r'href="(/shorts/[^"]*)"'
+        matches = re.findall(shorts_pattern, content)
+        for match in matches:
+            url = f"https://www.youtube.com{match.replace('&amp;', '&')}"
+            result.append(url)
 
     return result
 
