@@ -6,6 +6,28 @@ from pytube import YouTube
 from pytube import exceptions
 from youtube_transcript_api import YouTubeTranscriptApi
 
+def _extractYouTubeShorts(html):
+    pattern = r'<a href="(/watch\?v=[^&]*&amp;[^"]*shorts[^"]*)"'
+    matches = re.findall(pattern, html)
+    result = []
+
+    for match in matches:
+        url = f"https://www.youtube.com{match.replace('&amp;', '&')}"
+        result.append(url)
+
+    return result
+
+def getYouTubeShorts(query):
+    query = query.replace(" ", "+")
+    response = requests.get(f"https://www.youtube.com/results?search_query=shorts+{query}")
+
+    if response.status_code == 200:
+        shorts = _extractYouTubeShorts(response.text)
+        return shorts
+    else:
+        print("Error while making YouTube shorts search", response.text)
+        raise Exception("Error while making YouTube shorts search")
+
 
 def _extractBingImages(html):
     pattern = r'mediaurl=(.*?)&amp;.*?expw=(\d+).*?exph=(\d+)'
