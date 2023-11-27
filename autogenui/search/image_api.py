@@ -4,6 +4,7 @@ import re
 import urllib.parse
 from pytube import YouTube
 from pytube import exceptions
+from youtube_transcript_api import YouTubeTranscriptApi
 
 
 def _extractBingImages(html):
@@ -88,8 +89,52 @@ def extract_video_data(input_data):
         # Parse the JSON string if 'current_item' is a string
         if isinstance(current_item, str):
             current_item = json.loads(current_item)
+
         try:
             yt = YouTube(current_item.get("link"))
+            transcript = YouTubeTranscriptApi.get_transcript(current_item.get("id"), languages=['hi', 'en'])
+        except Exception as e:
+            print(f"An error occurred while extracting transcript for video {current_item.get('id')}: {str(e)}")
+            transcript = []
+
+        try:
+            stream = yt.streams.get_highest_resolution()
+        except Exception as e:
+            print(f"An error occurred while extracting stream for video {current_item.get('id')}: {str(e)}")
+            stream = None
+
+        extracted_data = {
+            "type": current_item.get("type"),
+            "id": current_item.get("id"),
+            "link": current_item.get("link"),
+            "duration": current_item.get("duration"),
+            "title": current_item.get("title"),
+            "descriptionSnippet": current_item.get("descriptionSnippet", []),
+            "viewCount": current_item.get("viewCount", {}),
+            "stream": stream,
+            "transcript": transcript,
+            "similarity_score": current_item.get("similarity_score"),
+        }
+
+        output_data.append(extracted_data)
+
+    return output_data
+
+""" def extract_video_data(input_data):
+    output_data = []
+
+    for item in input_data:
+        # Introduce a new variable to avoid UnboundLocalError
+        current_item = item
+
+        # Parse the JSON string if 'current_item' is a string
+        if isinstance(current_item, str):
+            current_item = json.loads(current_item)
+        try:
+            yt = YouTube(current_item.get("link"))
+
+            transcript = YouTubeTranscriptApi.get_transcript(current_item.get("id"), languages=['hi', 'en'])
+            stream =  yt.streams.get_highest_resolution()
             extracted_data = {
                 "type": current_item.get("type"),
                 "id": current_item.get("id"),
@@ -98,14 +143,19 @@ def extract_video_data(input_data):
                 "title": current_item.get("title"),
                 "descriptionSnippet": current_item.get("descriptionSnippet", []),
                 "viewCount": current_item.get("viewCount", {}),
-                "stream": yt.streams.get_highest_resolution()
+                "stream": stream,
+                "transcript": transcript,
+                "similarity_score": current_item.get("similarity_score"),
             }
             output_data.append(extracted_data)
         except exceptions.AgeRestrictedError:
+            print(f"An AgeRestrictedError occurred for video {current_item.get('id')}")
             # Handle age-restricted video
             continue
         except Exception as e:
             # Handle any other exceptions
             print(f"An error occurred for video {current_item.get('id')}: {str(e)}")
 
-    return output_data
+            continue
+
+    return output_data """
