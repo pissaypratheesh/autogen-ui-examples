@@ -7,7 +7,7 @@ from pytube import exceptions
 from youtube_transcript_api import YouTubeTranscriptApi
 
 def _extractYouTubeShorts(html):
-    pattern = r'<a href="(/shorts/[^"]*)"'
+    pattern = r'href="(/shorts/[^"]*)"'
     matches = re.findall(pattern, html)
     print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:12 ~ matches:", matches)
     result = []
