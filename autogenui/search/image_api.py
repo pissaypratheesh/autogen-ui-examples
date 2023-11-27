@@ -9,6 +9,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 def _extractYouTubeShorts(html):
     pattern = r'<a href="(/watch\?v=[^&]*&amp;[^"]*shorts[^"]*)"'
     matches = re.findall(pattern, html)
+    print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:12 ~ matches:", matches)
     result = []
 
     for match in matches:
@@ -23,6 +24,8 @@ def getYouTubeShorts(query):
 
     if response.status_code == 200:
         shorts = _extractYouTubeShorts(response.text)
+        print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:26 ~ esponse.text:", response.text)
+        print("\n\n\n\n\n\n\n\n\n🚀 ~ file: image_api.py:26 ~ shorts:", shorts)
         return shorts
     else:
         print("Error while making YouTube shorts search", response.text)
@@ -141,6 +144,9 @@ def extract_video_data(input_data):
         output_data.append(extracted_data)
 
     return output_data
+
+resyt = getYouTubeShorts("narendramodi and rahul gandhi rivalri")
+print("🚀 ~ file: image_api.py:146 ~ resyt:", resyt)
 
 """ def extract_video_data(input_data):
     output_data = []
