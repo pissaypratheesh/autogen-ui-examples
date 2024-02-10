@@ -8,6 +8,7 @@ import autogen
 from .utils import parse_token_usage
 import time
 from autogen.agentchat.contrib.teachable_agent import TeachableAgent
+from openai import AzureOpenAI
 from autogen import UserProxyAgent
 from .lm_agent import LMStudioAgent
 from .search.search_query import get_search_result
@@ -36,8 +37,9 @@ class Manager(object):
             env_or_file="OAI_CONFIG_LIST_AZURE",
             file_location=".",
         )
+        numeric_hash = create_numeric_hash(prompt)
         llm_config = {
-            "seed": 42,  # seed for caching and reproducibility
+            "seed": numeric_hash,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
             "temperature": 0,  # temperature for sampling
             "use_cache": True,  # whether to use cache
@@ -74,47 +76,130 @@ class Manager(object):
             "duration": time.time() - start_time,
         }
         return response    
-    def run_summarization_flow(self, prompt: str, id: str = None) -> None:
-        logging.info('Starting logging for run_flow method')
-        config_list = autogen.config_list_from_json(
-            env_or_file="OAI_CONFIG_LIST_AZURE",
-            file_location=".",
-        )
-        llm_config = {
-            "seed": 42,  # seed for caching and reproducibility
-            "config_list": config_list,  # a list of OpenAI API configurations
-            "temperature": 0,  # temperature for sampling
-            "use_cache": True,  # whether to use cache
-        }
+    def run_summarization_flow(self, prompt: str, id: str = None, title: str = None) -> None:
+        config_list = [
+            {
+                'model': 'GPT4',
+                'api_key': '8778e5ede6014d8a83b385c908149b12',
+                'base_url' : 'https://dh-prod-openai.openai.azure.com/',
+                'api_type': 'azure',
+                'api_version': '2023-07-01-preview',
+            }
+        ]
+        numeric_hash = create_numeric_hash(prompt)
 
+        start_time = time.time()
         assistant = autogen.AssistantAgent(
             name="assistant",
-            max_consecutive_auto_reply=3, llm_config=llm_config,)
+            system_message="""You are a helpful AI assistant who is an expert in text summarization in a funny way with genZ lingo to make it kickass.
+              You don't miss out any details.
+              You should not make up any sentences.
+              Also summarize to communicate the same via 5 popular memes with the name of meme and few short meme lines in an array.
+              You will always return as JSON with the following format:
+                `{
+                    "summary": "summary here has to be around 80 to 120 words",
+                    "points: [
+                        "emoticon summary first point",
+                        "emoticon summary second point", 
+                        "..so on"
+                    ],
+                    "memes": [
+                        {
+                            "name": "meme name",
+                            "lines": [
+                                "meme line 1", "meme line 2",..
+                            ]
+                        }
+                    ]
 
+                }`
+              The summary part of the json should be around 120 words and less than that if only the given text itself is less.  
+              You add relevant emoticons to the points only and not to the summary.
+              Don't create or execute any code.
+              And exit chat with "TERMINATE"
+            """,
+            llm_config={
+                "seed": numeric_hash,  # seed for caching and reproducibility
+                "config_list": config_list,  # a list of OpenAI API configurations
+                "temperature": 0.5,  # temperature for sampling
+            },  # configuration for autogen's enhanced inference API which is compatible with OpenAI API
+        )
         # create a UserProxyAgent instance named "user_proxy"
         user_proxy = autogen.UserProxyAgent(
             name="user_proxy",
             human_input_mode="NEVER",
-            llm_config=llm_config,
+            system_message="""Your job is the verify the summarization of the text for any errors and only return the JSON provided without any malformation. 
+            Also check that in json, summary has to be around 80 to 120 words """,
             max_consecutive_auto_reply=3,
             is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
-            code_execution_config={
-                "work_dir": "scratch/coding",
-                "use_docker": False
-            },
         )
-        start_time = time.time()
+        # the assistant receives a message from the user_proxy, which contains the task description
         user_proxy.initiate_chat(
             assistant,
-            message=prompt,
+            message=prompt.replace("/summarize ", ''),
         )
-
         messages = user_proxy.chat_messages[assistant]
-        logged_history = autogen.ChatCompletion.logged_history
-        logging.info('Stopping logging for run_system_design_flow method')
+        print("\n\n\n\nmsgs:",messages)
         response = {
             "messages": messages[1:],
-            "usage": parse_token_usage(logged_history),
+            "usage": parse_token_usage({}),
+            "duration": time.time() - start_time,
+        }
+        return response 
+
+
+    def run_simple_summary_flow(self, prompt: str, id: str = None, title: str = None) -> None:
+        config_list = [
+            {
+                'model': 'GPT4',
+                'api_key': '8778e5ede6014d8a83b385c908149b12',
+                'base_url' : 'https://dh-prod-openai.openai.azure.com/',
+                'api_type': 'azure',
+                'api_version': '2023-07-01-preview',
+            }
+        ]
+        numeric_hash = create_numeric_hash(prompt)
+
+        start_time = time.time()
+        assistant = autogen.AssistantAgent(
+            name="assistant",
+            system_message="""You are a helpful AI assistant who is an expert in text summarization in a simple funny way with genZ lingo to make it kickass.
+              You don't miss out any details.
+              You should not make up any sentences.
+              You will always return as JSON with the following format:
+                `{
+                    "summary": "summary here has to be around 80 to 120 words",
+                }`
+              The summary part of the json should be around 120 words and less than that if only the given text itself is less.  
+              You add relevant emoticons to the points only and not to the summary.
+              Don't create or execute any code.
+              And exit chat with "TERMINATE"
+            """,
+            llm_config={
+                "seed": numeric_hash,  # seed for caching and reproducibility
+                "config_list": config_list,  # a list of OpenAI API configurations
+                "temperature": 0.5,  # temperature for sampling
+            },  # configuration for autogen's enhanced inference API which is compatible with OpenAI API
+        )
+        # create a UserProxyAgent instance named "user_proxy"
+        user_proxy = autogen.UserProxyAgent(
+            name="user_proxy",
+            human_input_mode="NEVER",
+            system_message="""Your job is the verify the summarization of the text for any errors and only return the JSON provided without any malformation. 
+            """,
+            max_consecutive_auto_reply=3,
+            is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
+        )
+        # the assistant receives a message from the user_proxy, which contains the task description
+        user_proxy.initiate_chat(
+            assistant,
+            message=prompt.replace("/title_summary ", ''),
+        )
+        messages = user_proxy.chat_messages[assistant]
+        print("\n\n\n\nmsgs:",messages)
+        response = {
+            "messages": messages[1:],
+            "usage": parse_token_usage({}),
             "duration": time.time() - start_time,
         }
         return response    
@@ -144,7 +229,7 @@ class Manager(object):
             name="user_proxy",
             human_input_mode="NEVER",
             llm_config=llm_config,
-            max_consecutive_auto_reply=3,
+            max_consecutive_auto_reply=2,
             default_auto_reply="default_auto_reply",
             system_message="""Reply TERMINATE if the task has been solved at full satisfaction.
                              Otherwise, reply CONTINUE, or the reason why the task is not solved yet.""",
@@ -174,7 +259,8 @@ class Manager(object):
     def run_teachable_agent_flow(self, prompt: str, flow: str = "default") -> None:
         refined = "teachable/"
         create_directory(f"{refined}")
-        autogen.ChatCompletion.start_logging(compact=False)
+       # autogen.ChatCompletion.start_logging(compact=False)
+
         start_time = time.time()
         
         numeric_hash = create_numeric_hash(prompt)
@@ -227,7 +313,7 @@ class Manager(object):
         #initiate
         user.initiate_chat(teachable_agent, message=f"{prompt.replace('/teachable', '')}", clear_history=False)
         logged_history = autogen.ChatCompletion.logged_history
-        autogen.ChatCompletion.stop_logging()
+        #autogen.ChatCompletion.stop_logging()
         response = {
             "messages": user.chat_messages[teachable_agent][1:],
             "usage": parse_token_usage(logged_history),
@@ -241,7 +327,7 @@ class Manager(object):
         refined = "system_design/" + refined[:10]
         create_directory(f"{refined}")
 
-        autogen.ChatCompletion.start_logging(compact=False)
+        #autogen.ChatCompletion.start_logging(compact=False)
 
         config_list = autogen.config_list_from_json(
             env_or_file="OAI_CONFIG_LIST",

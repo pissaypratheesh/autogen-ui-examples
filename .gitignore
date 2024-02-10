@@ -13,6 +13,7 @@ tmp/
 # C extensions
 *.so 
 OAI_CONFIG_LIST
+experimental/
 OAI_CONFIG_LIST_AZURE
 scratch
 coding

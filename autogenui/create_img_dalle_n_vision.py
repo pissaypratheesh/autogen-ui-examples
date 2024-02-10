@@ -216,7 +216,7 @@ class DALLEAgent(ConversableAgent):
 #  It iteratively improves the image by sending the prompt to DALLE and receiving feedback from Critics.
 class DalleCreator(AssistantAgent):
 
-    def __init__(self, n_iters=2, **kwargs):
+    def __init__(self, n_iters=1, **kwargs):
         """
         Initializes a DalleCreator instance.
         
@@ -259,7 +259,7 @@ class DalleCreator(AssistantAgent):
                 """,
             llm_config={"config_list": config_list_4v, "max_tokens": 1000},
             human_input_mode="NEVER",
-            max_consecutive_auto_reply=3,
+            max_consecutive_auto_reply=2,
         )
 
         self.dalle = DALLEAgent(name="Dalle", llm_config={"config_list": config_list_dalle},     
@@ -272,9 +272,9 @@ class DalleCreator(AssistantAgent):
         print("folder_name or self", self.llm_config, folder_name)
         img = extract_img(self.dalle)
         img.save(f"{folder_name}/image.png")
-        plt.imshow(img)
-        plt.axis('off')  # Turn off axis numbers
-        plt.show()
+        # plt.imshow(img)
+        # plt.axis('off')  # Turn off axis numbers
+        # plt.show()
         print("Image PLOTTED")
         
         
@@ -310,9 +310,9 @@ class DalleCreator(AssistantAgent):
             img = extract_img(self.dalle)
             os.makedirs(folder_name, exist_ok=True)
             img.save(f"{folder_name}/image_{i}.png")
-            plt.imshow(img)
-            plt.axis('off')  # Turn off axis numbers
-            plt.show()
+            # plt.imshow(img)
+            # plt.axis('off')  # Turn off axis numbers
+            # plt.show()
             print(f"Image {i} PLOTTED")
 
         return True, "result.jpg"

@@ -10,6 +10,9 @@ def create_numeric_hash(string):
     # Convert the hexadecimal representation to an integer
     numeric_hash = int(hash_value, 16)
 
+     # Calculate the remainder when dividing by 9223372036854775807
+    numeric_hash = numeric_hash % 9223372036854775807
+
     return numeric_hash
 
 # Example usage
